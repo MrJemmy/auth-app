@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import avatar from "../../assets/images/profile.png"
 import style from "../../styles/form.module.css"
@@ -5,7 +6,7 @@ import { Toaster, toast } from "react-hot-toast";
 import { useFormik } from "formik";
 import { validate } from "../../utils/validation";
 
-function Login() {
+function ResetPassword() {
 
     const formik = useFormik({
         initialValues: {
@@ -29,24 +30,23 @@ function Login() {
         <>
             <div className="container mx-auto">
 
-            <Toaster position="top-right" reverseOrder={false}></Toaster>
+                <Toaster position="top-right" reverseOrder={false}></Toaster>
 
                 <div className="flex justify-center items-center h-screen">
                     <div className={style.glass}>
                         <div className="title flex flex-col items-center">
-                            <h1 className="text-5xl font-bold">Hello Again!</h1>
+                            <h1 className="text-5xl font-bold">Reset Password</h1>
                             <span className="py-4 text-xl w-2/3 text-center text-gray-500">
-                                Explore More by connecting with us.
+                                Enter OTP to reset password
                             </span>
                         </div>
 
-                        <form className="py-1" onSubmit={formik.handleSubmit}>
-                            <div className="profile flex justify-center py-5">
-                                <img className={style.profile_img} src={avatar} alt="avtar" />
-                            </div>
+                        <form className="py-10" onSubmit={formik.handleSubmit}>
 
                             <div className="inputbox flex flex-col items-center gap-6">
-
+                                <span className="py-4 text-sm text-left text-gray-500">
+                                    Enter 6 digit OTP sent to your email address.
+                                </span>
                                 <input className={style.textbox} {...formik.getFieldProps('username')} type="text" placeholder="Enter Username" />
                                 <input className={style.textbox} {...formik.getFieldProps('password')} type="password" placeholder="Enter Password" />
                                 <input className={style.btn} type="submit" value="Sign Up" />
@@ -65,4 +65,4 @@ function Login() {
     )
 }
 
-export default Login;
+export default ResetPassword;
