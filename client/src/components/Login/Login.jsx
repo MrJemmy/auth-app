@@ -55,7 +55,7 @@ function Login() {
 
                             <div className="text-center py-4">
                                 <p className="text-gray-500">Not a Member <Link className="text-red-500" to="/register">Register Now</Link></p>
-                                <p className="text-gray-500">Forgot Password <Link className="text-red-500" to="/resetpassword">Reset Now</Link></p>
+                                <p className="text-gray-500">Forgot Password <Link className="text-red-500" to="/otp">Reset Now</Link></p>
                             </div>
                         </form>
                     </div>

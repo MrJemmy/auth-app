@@ -1,6 +1,4 @@
-
 import { Link } from "react-router-dom";
-import avatar from "../../assets/images/profile.png"
 import style from "../../styles/form.module.css"
 import { Toaster, toast } from "react-hot-toast";
 import { useFormik } from "formik";
@@ -37,7 +35,7 @@ function ResetPassword() {
                         <div className="title flex flex-col items-center">
                             <h1 className="text-5xl font-bold">Reset Password</h1>
                             <span className="py-4 text-xl w-2/3 text-center text-gray-500">
-                                Enter OTP to reset password
+                                Enter new password
                             </span>
                         </div>
 
@@ -48,14 +46,12 @@ function ResetPassword() {
                                     Enter 6 digit OTP sent to your email address.
                                 </span>
                                 <input className={style.textbox} {...formik.getFieldProps('username')} type="text" placeholder="Enter Username" />
-                                <input className={style.textbox} {...formik.getFieldProps('password')} type="password" placeholder="Enter Password" />
                                 <input className={style.btn} type="submit" value="Sign Up" />
                             </div>
 
 
                             <div className="text-center py-4">
                                 <p className="text-gray-500">Not a Member <Link className="text-red-500" to="/register">Register Now</Link></p>
-                                <p className="text-gray-500">Forgot Password <Link className="text-red-500" to="/resetpassword">Reset Now</Link></p>
                             </div>
                         </form>
                     </div>
