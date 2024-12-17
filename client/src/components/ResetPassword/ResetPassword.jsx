@@ -2,22 +2,22 @@ import { Link } from "react-router-dom";
 import style from "../../styles/form.module.css"
 import { Toaster, toast } from "react-hot-toast";
 import { useFormik } from "formik";
-import { validate } from "../../utils/validation";
+import { validateResetPassword } from "../../utils/validation";
 
 function ResetPassword() {
 
     const formik = useFormik({
         initialValues: {
-            username: "",
-            password: ""
+            password: "",
+            conformPassword: ""
         },
-        validate: validate,
+        validate: validateResetPassword,
         validateOnBlur: false,
         validateOnChange: false,
         onSubmit: async (values) => {
-            if (values.username && values.password) {
+            if (values.conformPassword && values.password) {
                 console.log(values);
-                toast.success("Login successful!");
+                toast.success("Password Reset successfully!");
             } else {
                 toast.error("Please fill out all fields correctly.");
             }
@@ -45,13 +45,9 @@ function ResetPassword() {
                                 <span className="py-4 text-sm text-left text-gray-500">
                                     Enter 6 digit OTP sent to your email address.
                                 </span>
-                                <input className={style.textbox} {...formik.getFieldProps('username')} type="text" placeholder="Enter Username" />
-                                <input className={style.btn} type="submit" value="Sign Up" />
-                            </div>
-
-
-                            <div className="text-center py-4">
-                                <p className="text-gray-500">Not a Member <Link className="text-red-500" to="/register">Register Now</Link></p>
+                                <input className={style.textbox} {...formik.getFieldProps('password')} type="password" placeholder="Enter Password" />
+                                <input className={style.textbox} {...formik.getFieldProps('conformPassword')} type="password" placeholder="Conform Password" />
+                                <input className={style.btn} type="submit" value="Reset" />
                             </div>
                         </form>
                     </div>

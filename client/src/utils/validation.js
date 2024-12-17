@@ -2,11 +2,35 @@ import toast from "react-hot-toast";
 
 export async function validate(values) {
     let error = {}
-    error = usernameVerify({}, values)
-    error = {...error, ...passwordVerify({}, values)}
+    error = usernameVerify(error, values)
+    error = passwordVerify({}, values)
 
     return error;
 }
+
+
+export async function validateResetPassword(values) {
+    let error = {}
+    if(values.password !== values.conformPassword){
+        error.match = toast.error("Password not match...!")
+    }
+
+    error = passwordVerify(error, values)
+
+    return error;
+}
+
+
+export async function validateRegistraion(values) {
+    let error = {}
+    error = usernameVerify(error, values)
+    error = emailVerify(error, values)
+    error = passwordVerify(error, values)
+
+    return error;
+}
+
+
 
 
 /** validate username **/
@@ -16,6 +40,20 @@ function usernameVerify(error={}, values){
     }else if(values.username.includes(" ")){
         error.username = toast.error("Invalid Username...!")
     }
+
+    return error
+}
+
+
+function emailVerify(error={}, values){
+    if(!values.email){
+        error.email = toast.error("Email Required...!");
+    }else if(values.email.includes(" ")){
+        error.email = toast.error("Invalid Email...!")
+    }else if(!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)){
+        error.email = toast.error("Invalid email address...!")
+    }
+
 
     return error
 }
