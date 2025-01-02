@@ -4,6 +4,7 @@ import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import ResetPassword from './components/ResetPassword/ResetPassword';
 import OTP from './components/OTP/OTP'
+import Prifile from './components/Profile/Profile'
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: '/otp',
     element: <OTP />
+  },
+  {
+    path: '/Profile',
+    element: <Prifile />
   },
 ])
 

@@ -31,6 +31,14 @@ export async function validateRegistraion(values) {
 }
 
 
+export async function validateProfile(values) {
+    let error = {}
+    error = emailVerify(error, values)
+
+    return error;
+}
+
+
 
 
 /** validate username **/
