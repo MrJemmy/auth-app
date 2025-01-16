@@ -290,6 +290,8 @@ const getUser = async (req, res) => {
 
         const user = await User.findById(userId)
 
+        if(!user) return res.status(404).json({"msg": "user not found"})
+
         // const {password, ...restUserData} = user;  // can not pass directly, give us unnecessary response
         const { password, ...restUserData } = Object.assign({}, user.toJSON());
 
@@ -399,6 +401,6 @@ const deleteUser = async (req, res) => {
 };
 
 
-module.exports = { userRegister, userLogin, userForgotPassword, userResetPassword, generateOTP, userLogout, getUsers, userRefreshToken }
+module.exports = { userRegister, userLogin, userForgotPassword, userResetPassword, generateOTP, userLogout, userRefreshToken, getUsers, getUser,  updateUser, deleteUser}
 
 
