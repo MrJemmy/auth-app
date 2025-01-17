@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const { sendEmail } = require('../config/email_config')
 const { OTP_DATA } = require('../config/email_temps')
 
-
+const otp_data = {}
 const salt = bcrypt.genSaltSync(10)
 
 
@@ -56,6 +56,8 @@ const userRegister = async (req, res) => {
         }
 
         const hashPassword = bcrypt.hashSync(password, salt)
+
+        // if user is Admin and creating admin user, write condition for that
         await User.create({ username: username, password: hashPassword, email: email, profilePic: profilePic })
 
 
@@ -83,24 +85,21 @@ const userLogin = async (req, res) => {
 
         const passOk = bcrypt.compareSync(password, user.password)
 
-        if (passOk) {
-            let username = user["username"];
-            const tokenData = { id: user["_id"], username: username, roles: user["roles"] }
-            const accessToken = jwt.sign(tokenData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "5m" })
-            const refreshToken = jwt.sign(tokenData, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "1d" })
-            // also need to set sameSite : 'None', otherwise frontend did not accepts refresh token as cookie
-            // and then they say secure must be true
-            res.cookie("jwt", refreshToken, { httpOnly: true, sameSite: "None", secure: true, maxAge: 24 * 60 * 60 * 1000 })
-            return res.json({
-                "msg": "login succesfully",
-                accessToken: accessToken,
-                username: username
-            })
-        } else {
-            return res.status(500).json({
-                "msg": "login fail, password wrong"
-            })
-        }
+        if (!passOk) return res.status(500).json({ "msg": "login fail, password wrong" })
+
+        let username = user["username"];
+        const tokenData = { id: user["_id"], username: username, roles: user["roles"] }
+        const accessToken = jwt.sign(tokenData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "5m" })
+        const refreshToken = jwt.sign(tokenData, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "1d" })
+        // also need to set sameSite : 'None', otherwise frontend did not accepts refresh token as cookie
+        // and then they say secure must be true
+        res.cookie("jwt", refreshToken, { httpOnly: true, sameSite: "None", secure: true, maxAge: 24 * 60 * 60 * 1000 })
+        return res.json({
+            "msg": "login succesfully",
+            accessToken: accessToken,
+            username: username
+        })
+
     } catch (error) {
         console.error(error)
         return res.status(500).json({
@@ -108,7 +107,6 @@ const userLogin = async (req, res) => {
         })
     }
 }
-
 
 const userRefreshToken = async (req, res) => {
 
@@ -124,10 +122,9 @@ const userRefreshToken = async (req, res) => {
 
         if (!user) return res.status(401).json({ msg: "User not found" })
 
-
         if (user.username !== refreshTokenData.username && user._id !== refreshTokenData.id) return res.status(403).json({ msg: "Refresh Token is invalid" })
 
-        const tokenData = { id: user["_id"], username: user["username"] }
+        const tokenData = { id: user["_id"], username: user["username"], roles: user["roles"] }
         const accessToken = jwt.sign(tokenData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "5m" })
         return res.json({
             "msg": "login succesfully",
@@ -142,38 +139,31 @@ const userRefreshToken = async (req, res) => {
 
 }
 
-
-const otp_data = {}
-
 const generateOTP = async (req, res) => {
 
     try {
-        const to = req.body["email"]
-        const username = req.body["username"]
+        const userEmail = req.body["email"]
 
-        const user = await User.findOne({ username: username })
-        if (!user) {
-            return res.json({
-                msg: "user not found"
-            })
-        } else {
-            let subject = OTP_DATA["OTP_SUBJECT"];
-            let html_1 = OTP_DATA["OTP_HTML_1"];
-            let html_2 = OTP_DATA["OTP_HTML_2"];
+        const user = await User.findOne({ email: userEmail })
+        if (!user) return res.json({ msg: "no user dose exis with this email address" })
 
-            let otp = Math.round(Math.random() * 9000);
+        let subject = OTP_DATA["OTP_SUBJECT"];
+        let html_1 = OTP_DATA["OTP_HTML_1"];
+        let html_2 = OTP_DATA["OTP_HTML_2"];
 
-            otp_data[to] = { otp: otp, time: Date.now() };
+        let otp = Math.round(Math.random() * 9000);
 
-            let html = `${html_1} ${otp} ${html_2}`
+        otp_data[userEmail] = { otp: otp, time: Date.now() };
 
-            sendEmail(to, subject, html)
+        let html = `${html_1} ${otp} ${html_2}`
 
-            console.log(otp_data)
-            return res.json({
-                msg: "otp send"
-            })
-        }
+        sendEmail(userEmail, subject, html)
+
+        console.log(otp_data)
+        return res.json({
+            msg: "otp send"
+        })
+
     } catch (error) {
         console.error(error)
         return res.status(500).json({
@@ -211,35 +201,35 @@ const userForgotPassword = async (req, res) => {
             "msg": "Error in Forgot Password"
         })
     }
+}
 
-
+const verifyOtp = () => {
 
 }
+
 
 const userResetPassword = async (req, res) => {
 
     try {
-        const { old_password, new_password } = req.body;
-        const id = req.user["id"];
+        const { currentPassword, newPassword } = req.body;
+        const username = req.user["username"];
 
-        if (old_password === new_password) {
-            return res.json({
-                msg: "same as previous password"
-            })
-        }
+        const user = await User.findOne({ username: username })
 
-        const user = await User.findOne({ _id: id })
-        if (user.password != old_password) {
-            return res.json({
-                msg: "password auth fail and please renter the password"
-            })
-        } else {
-            await User.updateOne({ _id: id }, { password: new_password })
+        // we also can verify the password is strong or not
+        const passOk = bcrypt.compareSync(currentPassword, user.password)
+        if (!passOk) return res.json({ msg: "password auth fail and please renter the password" })
+        const isSamePass = bcrypt.compareSync(newPassword, user.password)
+        if (isSamePass) return res.json({ msg: "new password is same as old password" })
 
-            return res.json({
-                msg: "password updated succesfully"
-            })
-        }
+        const hashPassword = bcrypt.hashSync(newPassword, salt)
+        user.password = hashPassword;
+        await user.save();
+
+        return res.json({
+            msg: "password updated succesfully"
+        })
+
     } catch (error) {
         console.error(error)
         return res.status(500).json({
@@ -256,7 +246,7 @@ const userLogout = async (req, res) => {
         const cookies = req.cookies
 
         if (!cookies?.jwt) return res.status(204).json({ msg: "Refresh Token not found" })
-        res.clearCookie("jwt", { httpOnly: true, sameSite: "None",secure: true });
+        res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
         return res.json({
             msg: "user logged out successfully"
         })
@@ -267,7 +257,6 @@ const userLogout = async (req, res) => {
         })
     }
 }
-
 
 const getUsers = async (req, res) => {
 
@@ -284,13 +273,13 @@ const getUsers = async (req, res) => {
 }
 
 const getUser = async (req, res) => {
-
+    // user can access it only if it's logged in user,
     try {
         const userId = req.params["userId"]
 
         const user = await User.findById(userId)
 
-        if(!user) return res.status(404).json({"msg": "user not found"})
+        if (!user) return res.status(404).json({ "msg": "user not found" })
 
         // const {password, ...restUserData} = user;  // can not pass directly, give us unnecessary response
         const { password, ...restUserData } = Object.assign({}, user.toJSON());
@@ -372,7 +361,6 @@ const updateUser = async (req, res) => {
     }
 };
 
-
 const deleteUser = async (req, res) => {
     // User self, ADMIN
     try {
@@ -401,6 +389,6 @@ const deleteUser = async (req, res) => {
 };
 
 
-module.exports = { userRegister, userLogin, userForgotPassword, userResetPassword, generateOTP, userLogout, userRefreshToken, getUsers, getUser,  updateUser, deleteUser}
+module.exports = { userRegister, userLogin, userForgotPassword, userResetPassword, generateOTP, userLogout, userRefreshToken, verifyOtp, getUsers, getUser, updateUser, deleteUser }
 
 

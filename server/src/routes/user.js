@@ -11,21 +11,23 @@ const route = express.Router()
 // route.use(authToken)  // this will apply auth on all below API
 
 
-route.get('/',authToken, verifyRoles(ROLES_LIST.admin, ROLES_LIST.editor), getUsers)
-route.get('/:userId',authToken, getUser)
-// route.put('/:user_id', verifyRoles(ROLES_LIST.admin, ROLES_LIST.user) updateUser)
-// route.delete('/:user_id', deleteUser)
 route.post('/register', userRegister)
-// route.post('/register-main', mailRegister)
 route.post('/login', userLogin)
-route.post('/logout', userLogout);
-// right know verifing OTP inside forgot password
-route.post('/forgot_password', userForgotPassword);
-// route.post('/verify_otp', verifyOtp);
-route.post('/generate_otp', generateOTP);
-route.post('/reset_password', authToken, userResetPassword);
 route.post('/refresh', userRefreshToken);
+route.post('/generate_otp', generateOTP);
+route.post('/verify_otp', verifyOtp);
+route.post('/forgot_password', userForgotPassword);
+route.post('/reset_password', authToken, userResetPassword);
+route.post('/logout', userLogout);
 
+route.get('/',authToken, verifyRoles(ROLES_LIST.admin, ROLES_LIST.editor), getUsers)
+
+route.get('/:userId',authToken, getUser)
+route.put('/:user_id',authToken, updateUser)
+route.delete('/:user_id',authToken, deleteUser)
+
+// route.post('/register_main', mailRegister)
+// route.post('/verify_otp', verifyOtp);
 
 
 module.exports = route;

@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const cookieParse = require('cookie-parser')
 const cors = require('cors')
 const path = require('path')
+const fs = require('fs')
 const errorHandler =require("./src/middleware/errorHandler")
 const corsOptions =require("./src/config/corsConfig")
 const credentials = require("./src/middleware/credentials")
@@ -18,11 +19,32 @@ app.use(cookieParse())
 // app.use(express.urlencoded({extended: false}))
 app.disable("x-powered-by")
 
-app.use(express.static(path.join(__dirname, "public")))
 
 /* 
-    TODO: if folder in public donse not exist then create them
+TODO: put this fs create portion in function
 */
+if (!fs.existsSync(path.join(__dirname, 'public'))){
+    fs.mkdirSync(path.join(__dirname, 'public'));
+    fs.mkdirSync(path.join(__dirname, 'public', 'images'));
+    fs.mkdirSync(path.join(__dirname, 'public', 'images', 'profilePics'));
+    fs.mkdirSync(path.join(__dirname, 'public', 'images', 'uploads'));
+}
+
+if (!fs.existsSync(path.join(__dirname, 'public', 'images'))){
+    fs.mkdirSync(path.join(__dirname, 'public', 'images'));
+    fs.mkdirSync(path.join(__dirname, 'public', 'images', 'profilePics'));
+    fs.mkdirSync(path.join(__dirname, 'public', 'images', 'uploads'));
+}
+
+if (!fs.existsSync(path.join(__dirname, 'public', 'images', 'profilePics'))){
+    fs.mkdirSync(path.join(__dirname, 'public', 'images', 'profilePics'));
+}
+
+if (!fs.existsSync(path.join(__dirname, 'public', 'images', 'uploads'))){
+    fs.mkdirSync(path.join(__dirname, 'public', 'images', 'uploads'));
+}
+
+app.use(express.static(path.join(__dirname, "public")))
 
 
 app.use('/user', require('./src/routes/user'))
