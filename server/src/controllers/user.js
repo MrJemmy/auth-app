@@ -157,7 +157,7 @@ const generateOTP = async (req, res) => {
 
         otpStore[userEmail] = { 
             otp: otp, 
-            expires: Date.now() + 180000, 
+            expires: Date.now() + 192000, 
             isVerified: false
         };
 
@@ -185,7 +185,7 @@ const verifyOTP = async (req, res) => {
 
         if(!otpStore[email]) return res.json({msg: "email not found in otp store"});
 
-        if(otpStore[email]["otp"] == otp && (Date.now() > otpStore[email]["expires"] )) {
+        if(otpStore[email]["otp"] == otp && (Date.now() < otpStore[email]["expires"] )) {
             otpStore[email]["isVerified"] = true;
             return res.json({
                 msg: "otp verified"
@@ -216,7 +216,8 @@ const forgotPassword = async (req, res) => {
 
         delete otpStore[email];
 
-        await User.updateOne({ email: email }, { password: newPassword })
+        const hashPassword = bcrypt.hashSync(newPassword, salt)
+        await User.updateOne({ email: email }, { password: hashPassword })
 
         return res.json({
             msg: "password updated"
