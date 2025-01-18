@@ -1,6 +1,6 @@
 const express = require('express')
 const { authToken } = require("../middleware/tokenAuth")
-const { userRegister, userLogin, userForgotPassword, userResetPassword, generateOTP, userLogout, userRefreshToken, getUsers, getUser,  updateUser, deleteUser } = require("../controllers/user")
+const user = require("../controllers/user")
 const verifyRoles = require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/roles_list")
 
@@ -11,23 +11,20 @@ const route = express.Router()
 // route.use(authToken)  // this will apply auth on all below API
 
 
-route.post('/register', userRegister)
-route.post('/login', userLogin)
-route.post('/refresh', userRefreshToken);
-route.post('/generate_otp', generateOTP);
-route.post('/verify_otp', verifyOtp);
-route.post('/forgot_password', userForgotPassword);
-route.post('/reset_password', authToken, userResetPassword);
-route.post('/logout', userLogout);
+route.post('/register', user.register)
+route.post('/login', user.login)
+route.post('/refresh', user.refreshToken);
+route.post('/generate_otp', user.generateOTP);
+route.post('/verify_otp', user.verifyOTP);
+route.post('/forgot_password', user.forgotPassword);
+route.post('/reset_password', authToken, user.resetPassword);
+route.post('/logout', user.logout);
 
-route.get('/',authToken, verifyRoles(ROLES_LIST.admin, ROLES_LIST.editor), getUsers)
+route.get('/',authToken, verifyRoles(ROLES_LIST.admin, ROLES_LIST.editor), user.getAll)
 
-route.get('/:userId',authToken, getUser)
-route.put('/:user_id',authToken, updateUser)
-route.delete('/:user_id',authToken, deleteUser)
-
-// route.post('/register_main', mailRegister)
-// route.post('/verify_otp', verifyOtp);
+route.get('/:userId',authToken, user.getOne)
+route.put('/:user_id',authToken, user.updateOne)
+route.delete('/:user_id',authToken, user.deleteOne)
 
 
 module.exports = route;

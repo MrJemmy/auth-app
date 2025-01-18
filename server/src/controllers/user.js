@@ -3,8 +3,10 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { sendEmail } = require('../config/email_config')
 const { OTP_DATA } = require('../config/email_temps')
+const { json } = require('express')
+const e = require('express')
 
-const otp_data = {}
+const otpStore = {}
 const salt = bcrypt.genSaltSync(10)
 
 
@@ -20,7 +22,7 @@ const salt = bcrypt.genSaltSync(10)
             "profile": "",
         }
     */
-const userRegister = async (req, res) => {
+const register = async (req, res) => {
     try {
         const startTime = new Date();
         const { username, password, email } = req.body;
@@ -73,7 +75,7 @@ const userRegister = async (req, res) => {
     }
 }
 
-const userLogin = async (req, res) => {
+const login = async (req, res) => {
     try {
         const { identifier, password } = req.body;
 
@@ -108,7 +110,7 @@ const userLogin = async (req, res) => {
     }
 }
 
-const userRefreshToken = async (req, res) => {
+const refreshToken = async (req, res) => {
 
     try {
         const cookies = req.cookies
@@ -145,23 +147,27 @@ const generateOTP = async (req, res) => {
         const userEmail = req.body["email"]
 
         const user = await User.findOne({ email: userEmail })
-        if (!user) return res.json({ msg: "no user dose exis with this email address" })
+        if (!user) return res.json({ msg: "User dose exis with this email address" })
 
-        let subject = OTP_DATA["OTP_SUBJECT"];
-        let html_1 = OTP_DATA["OTP_HTML_1"];
-        let html_2 = OTP_DATA["OTP_HTML_2"];
+        const subject = OTP_DATA["OTP_SUBJECT"];
+        const htmlPre = OTP_DATA["OTP_HTML_PRE"];
+        const htmlPost = OTP_DATA["OTP_HTML_POST"];
 
-        let otp = Math.round(Math.random() * 9000);
+        const otp = Math.floor(Math.random() * 9000 + 1000);
 
-        otp_data[userEmail] = { otp: otp, time: Date.now() };
+        otpStore[userEmail] = { 
+            otp: otp, 
+            expires: Date.now() + 180000, 
+            isVerified: false
+        };
 
-        let html = `${html_1} ${otp} ${html_2}`
+        const htmlFinal = `${htmlPre} ${otp} ${htmlPost}`
 
-        sendEmail(userEmail, subject, html)
+        sendEmail(userEmail, subject, htmlFinal)
 
-        console.log(otp_data)
+        console.log(otpStore)
         return res.json({
-            msg: "otp send"
+            msg: "otp send to email"
         })
 
     } catch (error) {
@@ -172,29 +178,49 @@ const generateOTP = async (req, res) => {
     }
 }
 
-const userForgotPassword = async (req, res) => {
+const verifyOTP = async (req, res) => {
+
+    try {
+        const {email, otp} = req.body;
+
+        if(!otpStore[email]) return res.json({msg: "email not found in otp store"});
+
+        if(otpStore[email]["otp"] == otp && (Date.now() > otpStore[email]["expires"] )) {
+            otpStore[email]["isVerified"] = true;
+            return res.json({
+                msg: "otp verified"
+            })
+        }else{
+            return res.json({
+                msg: "otp verification failed"
+            })
+        }
+
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({
+            "msg": "Error in generating OTP"
+        })
+    }
+}
+
+const forgotPassword = async (req, res) => {
 
     try {
         // verify Email or Username
-        const { username, email, otp, new_password } = req.body;
-        console.log(otp_data[email])
-        if (!otp_data[email]) {
-            return res.json({
-                msg: "email is wrong"
-            })
-        } else if (otp_data[email]["otp"] == otp && (Date.now() - otp_data[email]["time"] <= 60000)) {
-            delete otp_data[email];
+        const { email, newPassword } = req.body;
+        
+        if (!otpStore[email]) return res.json({msg: "email not found in otp store"})
+        
+        if(!otpStore[email]["isVerified"]) return res.json({msg: "otp is not verified"})
 
-            await User.updateOne({ username: username }, { password: new_password })
+        delete otpStore[email];
 
-            return res.json({
-                msg: "password updated"
-            })
-        } else {
-            return res.json({
-                msg: "otp is wrong"
-            })
-        }
+        await User.updateOne({ email: email }, { password: newPassword })
+
+        return res.json({
+            msg: "password updated"
+        })
     } catch (error) {
         console.error(error)
         return res.status(500).json({
@@ -203,12 +229,8 @@ const userForgotPassword = async (req, res) => {
     }
 }
 
-const verifyOtp = () => {
 
-}
-
-
-const userResetPassword = async (req, res) => {
+const resetPassword = async (req, res) => {
 
     try {
         const { currentPassword, newPassword } = req.body;
@@ -241,7 +263,7 @@ const userResetPassword = async (req, res) => {
 
 }
 
-const userLogout = async (req, res) => {
+const logout = async (req, res) => {
     try {
         const cookies = req.cookies
 
@@ -258,7 +280,7 @@ const userLogout = async (req, res) => {
     }
 }
 
-const getUsers = async (req, res) => {
+const getAll = async (req, res) => {
 
     try {
         const users = await User.find()
@@ -272,7 +294,7 @@ const getUsers = async (req, res) => {
     }
 }
 
-const getUser = async (req, res) => {
+const getOne = async (req, res) => {
     // user can access it only if it's logged in user,
     try {
         const userId = req.params["userId"]
@@ -294,7 +316,7 @@ const getUser = async (req, res) => {
     }
 }
 
-const updateUser = async (req, res) => {
+const updateOne = async (req, res) => {
     try {
         const user_id = req.params["user_id"]; // 3
         const userBody = req.body;
@@ -361,7 +383,7 @@ const updateUser = async (req, res) => {
     }
 };
 
-const deleteUser = async (req, res) => {
+const deleteOne = async (req, res) => {
     // User self, ADMIN
     try {
         const userId = req.params["user_id"]; // 3
@@ -389,6 +411,4 @@ const deleteUser = async (req, res) => {
 };
 
 
-module.exports = { userRegister, userLogin, userForgotPassword, userResetPassword, generateOTP, userLogout, userRefreshToken, verifyOtp, getUsers, getUser, updateUser, deleteUser }
-
-
+module.exports = { register, login, forgotPassword, resetPassword, generateOTP, verifyOTP, logout, refreshToken, getAll, getOne, updateOne, deleteOne }
