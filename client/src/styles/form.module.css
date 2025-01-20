@@ -29,3 +29,11 @@
 input[type="file"]{
     display: none;
 }
+
+.valid_textbox{
+    @apply border border-green-500 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500
+}
+
+.invalid_textbox{
+    @apply border border-red-500 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-500
+}

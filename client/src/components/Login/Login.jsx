@@ -4,6 +4,8 @@ import style from "../../styles/form.module.css"
 import { Toaster, toast } from "react-hot-toast";
 import { useFormik } from "formik";
 import { validate } from "../../utils/validation";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import { faCircleCheck } from "@fortawesome/free-solid-svg-icons"
 
 function Login() {
 
@@ -47,8 +49,8 @@ function Login() {
 
                             <div className="inputbox flex flex-col items-center gap-6">
 
-                                <input className={style.textbox} {...formik.getFieldProps('username')} type="text" placeholder="Enter Username" />
-                                <input className={style.textbox} {...formik.getFieldProps('password')} type="password" placeholder="Enter Password" />
+                                <input className={`${style.textbox} ${formik.errors.username?style.invalid_textbox:style.valid_textbox}`} {...formik.getFieldProps('username')} type="text" placeholder="Enter Username" />
+                                <input className={`${style.textbox} ${formik.errors.username?style.invalid_textbox:style.valid_textbox}`} {...formik.getFieldProps('password')} type="password" placeholder="Enter Password" />
                                 <input className={style.btn} type="submit" value="Sign Up" />
                             </div>
 
