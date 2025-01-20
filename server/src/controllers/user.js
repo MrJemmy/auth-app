@@ -15,10 +15,6 @@ const salt = bcrypt.genSaltSync(10)
             "username": "",
             "password": "",
             "email": "",
-            "firstname": "",
-            "lastname": "",
-            "mobile": "",
-            "address": "",
             "profile": "",
         }
     */
@@ -75,6 +71,12 @@ const register = async (req, res) => {
     }
 }
 
+/** POST: user/login
+        * @param :  {
+            "identifier": "",
+            "password": "",
+        }
+    */
 const login = async (req, res) => {
     try {
         const { identifier, password } = req.body;
@@ -110,6 +112,11 @@ const login = async (req, res) => {
     }
 }
 
+/** POST: user/register
+        * @cookies :  {
+            jwt : ""
+        }
+    */
 const refreshToken = async (req, res) => {
 
     try {
