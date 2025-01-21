@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import avatar from "../../assets/images/profile.png"
 import style from "../../styles/form.module.css"
-import { Toaster, toast } from "react-hot-toast";
 import { useFormik } from "formik";
 import { validateRegistraion } from "../../utils/validation";
 import { useState } from "react";
 import convertToBase64 from "../../utils/convert";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {  } from "@fortawesome/free-solid-svg-icons"
 
 function Register() {
 
@@ -24,9 +25,9 @@ function Register() {
             values = Object.assign(values, {profile: file || ""})
 
             if (values.username && values.password && values.email) {
-                toast.success("Login successful!");
+                console.log("Login successful!");
             } else {
-                toast.error("Please fill out all fields correctly.");
+                console.log("Please fill out all fields correctly.");
             }
 
             console.log(values)
@@ -41,9 +42,6 @@ function Register() {
     return (
         <>
             <div className="container mx-auto">
-
-            <Toaster position="top-right" reverseOrder={false}></Toaster>
-
                 <div className="flex justify-center items-center h-screen">
                     <div className={style.glass}>
                         <div className="title flex flex-col items-center">

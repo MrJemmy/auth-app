@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import avatar from "../../assets/images/profile.png"
 import style from "../../styles/form.module.css"
-import { Toaster, toast } from "react-hot-toast";
 import { useFormik } from "formik";
 import { validate } from "../../utils/validation";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons"
+import {  } from "@fortawesome/free-solid-svg-icons"
 
 function Login() {
 
@@ -18,11 +17,14 @@ function Login() {
         validateOnBlur: false,
         validateOnChange: false,
         onSubmit: async (values) => {
+
+            const result = validate()
+            console.log(formik.errors)
             if (values.username && values.password) {
                 console.log(values);
-                toast.success("Login successful!");
+                console.log("Login successful!");
             } else {
-                toast.error("Please fill out all fields correctly.");
+                console.log("Please fill out all fields correctly.");
             }
         }
     })
@@ -30,8 +32,6 @@ function Login() {
     return (
         <>
             <div className="container mx-auto">
-
-            <Toaster position="top-right" reverseOrder={false}></Toaster>
 
                 <div className="flex justify-center items-center h-screen">
                     <div className={style.glass}>
