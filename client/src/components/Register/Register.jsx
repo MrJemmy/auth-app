@@ -1,37 +1,38 @@
 import { Link } from "react-router-dom";
 import avatar from "../../assets/images/profile.png"
 import style from "../../styles/form.module.css"
-import { useFormik } from "formik";
 import { validateRegistraion } from "../../utils/validation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import convertToBase64 from "../../utils/convert";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {  } from "@fortawesome/free-solid-svg-icons"
 
 function Register() {
 
+    const usernameRef = useRef();
+    const errRef = useRef();
+
+    const [username, setUsername] = useState("");
+    const [validUsername, setValidUsername] = useState(false);
+    const [usernameFocus, setUsernameFocus] = useState(false)
+
+    const [email, setEmail] = useState("");
+    const [validEmail, setValidEmail] = useState(false);
+    const [emailFocus, setEmailFocus] = useState(false)
+
+    const [password, setPassword] = useState("");
+    const [validPassword, setValidPassword] = useState(false);
+    const [passwordFocus, setPasswordFocus] = useState(false)
+    
+    const [matchPassword, setMatchPassword] = useState("");
+    const [validMatch, setValidMatch] = useState(false);
+    const [matchFocus, setMatchFocus] = useState(false)
+
     const [file, setFile] = useState();
 
-    const formik = useFormik({
-        initialValues: {
-            username: "",
-            email: "",
-            password: "",
-        },
-        validate: validateRegistraion,
-        validateOnBlur: false,
-        validateOnChange: false,
-        onSubmit: async (values) => {
-            values = Object.assign(values, {profile: file || ""})
+    const [errMsg, setErrMsg] = useState("");
+    const [success, setSuccess] = useState(false);
 
-            if (values.username && values.password && values.email) {
-                console.log("Login successful!");
-            } else {
-                console.log("Please fill out all fields correctly.");
-            }
-
-            console.log(values)
-        }
+    useEffect(() => {
+        usernameRef.current.focus()
     })
 
     const onUpload = async (e) => {
@@ -51,7 +52,7 @@ function Register() {
                             </span>
                         </div>
 
-                        <form className="py-1" onSubmit={formik.handleSubmit}>
+                        <form className="py-1" onSubmit={handleSubmit}>
                             <div className="profile flex justify-center py-5">
                                 <label htmlFor="profile">
                                     <img className={style.profile_img} src={file || avatar} alt="avtar" />
@@ -61,9 +62,9 @@ function Register() {
                             </div>
 
                             <div className="inputbox flex flex-col items-center gap-6">
-                                <input className={style.textbox} {...formik.getFieldProps('username')} type="text" placeholder="Enter Username*" />
-                                <input className={style.textbox} {...formik.getFieldProps('email')} type="text" placeholder="Enter Email*" />
-                                <input className={style.textbox} {...formik.getFieldProps('password')} type="password" placeholder="Enter Password*" />
+                                <input className={style.textbox} type="text" placeholder="Enter Username*" />
+                                <input className={style.textbox} type="text" placeholder="Enter Email*" />
+                                <input className={style.textbox} type="password" placeholder="Enter Password*" />
                                 <input className={style.btn} type="submit" value="Sign Up" />
                             </div>
 
