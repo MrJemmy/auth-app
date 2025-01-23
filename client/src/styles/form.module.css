@@ -40,6 +40,9 @@ input[type="file"]{
 .valid{
     color: limegreen;
 }
+.invalid{
+    color: red;
+}
 .hide{
     display: none;
 }

@@ -48,14 +48,14 @@ function Register() {
     }, [username])
 
     useEffect(() => {
-        const result = USER_REGEX.test(email)
+        const result = EMAIL_REGEX.test(email)
         console.log(result)
         console.log(email)
         setValidEmail(result)
     }, [email])
 
     useEffect(() => {
-        const result = USER_REGEX.test(password)
+        const result = PWD_REGEX.test(password)
         console.log(result)
         console.log(password)
         setValidPassword(result)
@@ -99,32 +99,101 @@ function Register() {
 
                             </div>
 
-                            <div className="inputbox flex flex-col items-center gap-6">
-                                <input
-                                    className={style.textbox}
-                                    type="text"
-                                    autoComplete="off"
-                                    ref={usernameRef}
-                                    placeholder="Enter Username*"
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    required
-                                    aria-invalid={validUsername ? "false" : "true"}
-                                    aria-describedby="uidnote"
-                                    onFocus={() => setUsernameFocus(true)}
-                                    onBlur={() => setUsernameFocus(false)}
-                                />
-                                <FontAwesomeIcon icon={faCheck} className={validUsername ? style.valid : style.hide} />
-                                <FontAwesomeIcon icon={faTimes} className={!validUsername && username ? style.valid : style.hide} />
+                            <div className="flex flex-col items-center gap-4">
+                                <div className="inputbox">
+                                    <input
+                                        className={style.textbox}
+                                        type="text"
+                                        autoComplete="off"
+                                        ref={usernameRef}
+                                        placeholder="Enter Username*"
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        required
+                                        aria-invalid={validUsername ? "false" : "true"}
+                                        aria-describedby="uidnote"
+                                        onFocus={() => setUsernameFocus(true)}
+                                        onBlur={() => setUsernameFocus(false)}
+                                    />
+                                    <FontAwesomeIcon icon={faCheck} className={validUsername ? style.valid : style.hide} />
+                                    <FontAwesomeIcon icon={faTimes} className={!validUsername && username ? style.invalid : style.hide} />
 
-                                <span id="uidnote" className={usernameFocus && username && !validUsername ? style.instructions : style.offscreen}>
-                                    <FontAwesomeIcon icon={faInfoCircle} />
-                                    4 to 24 characters.<br />
-                                    Must begin with a letter.<br />
-                                    Letters, numbers, underscores, hyphens allowed.
-                                </span>
+                                    <span id="uidnote" className={usernameFocus && username && !validUsername ? style.instructions : style.offscreen}>
+                                        <FontAwesomeIcon icon={faInfoCircle} />
+                                        4 to 24 characters.<br />
+                                        Must begin with a letter.<br />
+                                        Letters, numbers, underscores, hyphens allowed.
+                                    </span>
+                                </div>
 
-                                <input className={style.textbox} type="text" placeholder="Enter Email*" />
-                                <input className={style.textbox} type="password" placeholder="Enter Password*" />
+                                <div className="inputbox">
+                                    <input
+                                        className={style.textbox}
+                                        type="text"
+                                        autoComplete="off"
+                                        placeholder="Enter Email*"
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                        aria-invalid={validEmail ? "false" : "true"}
+                                        aria-describedby="emailnote"
+                                        onFocus={() => setEmailFocus(true)}
+                                        onBlur={() => setEmailFocus(false)}
+                                    />
+                                    <FontAwesomeIcon icon={faCheck} className={validEmail ? style.valid : style.hide} />
+                                    <FontAwesomeIcon icon={faTimes} className={!validEmail && email ? style.invalid : style.hide} />
+
+                                    <span id="emailnote" className={emailFocus && email && !validEmail ? style.instructions : style.offscreen}>
+                                        <FontAwesomeIcon icon={faInfoCircle} />
+                                        min 2 characters for top-level domain<br />
+                                        Must inclue @ befor domain name<br />
+                                        only dot(.), underscore(_), percent(%), plus(+) allowed.
+                                    </span>
+                                </div>
+
+                                <div className="inputbox">
+                                    <input
+                                        className={style.textbox}
+                                        type="text"
+                                        autoComplete="off"
+                                        placeholder="Enter Password*"
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        aria-invalid={validPassword ? "false" : "true"}
+                                        aria-describedby="passwordnote"
+                                        onFocus={() => setPasswordFocus(true)}
+                                        onBlur={() => setPasswordFocus(false)}
+                                    />
+                                    <FontAwesomeIcon icon={faCheck} className={validPassword ? style.valid : style.hide} />
+                                    <FontAwesomeIcon icon={faTimes} className={!validPassword && email ? style.invalid : style.hide} />
+
+                                    <span id="passwordnote" className={passwordFocus && password && !validPassword ? style.instructions : style.offscreen}>
+                                        <FontAwesomeIcon icon={faInfoCircle} />
+                                        8 to 24 characters.<br />
+                                        Must include uppercase and lowercase letters, a number and a special character.<br />
+                                        Allowed special characters: <span aria-label="exclamation mark">!</span> <span aria-label="at symbol">@</span> <span aria-label="hashtag">#</span> <span aria-label="dollar sign">$</span> <span aria-label="percent">%</span>
+                                    </span>
+                                </div>
+
+                                <div className="inputbox">
+                                    <input
+                                        className={style.textbox}
+                                        type="text"
+                                        autoComplete="off"
+                                        placeholder="Conform Password*"
+                                        onChange={(e) => setMatchPassword(e.target.value)}
+                                        required
+                                        aria-invalid={validMatch ? "false" : "true"}
+                                        aria-describedby="confirmnote"
+                                        onFocus={() => setMatchFocus(true)}
+                                        onBlur={() => setMatchFocus(false)}
+                                    />
+                                    <FontAwesomeIcon icon={faCheck} className={validMatch ? style.valid : style.hide} />
+                                    <FontAwesomeIcon icon={faTimes} className={!validMatch && matchPassword ? style.invalid : style.hide} />
+
+                                    <span id="confirmnote" className={matchFocus && matchPassword && !validMatch ? style.instructions : style.offscreen}>
+                                        <FontAwesomeIcon icon={faInfoCircle} />
+                                        Must match the first password input field.
+                                    </span>
+                                </div>
                                 <input className={style.btn} type="submit" value="Sign Up" />
                             </div>
 
