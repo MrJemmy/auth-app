@@ -37,3 +37,28 @@ input[type="file"]{
 .invalid_textbox{
     @apply border border-red-500 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-500
 }
+.valid{
+    color: limegreen;
+}
+.hide{
+    display: none;
+}
+
+.instructions {
+    font-size: 0.75rem;
+    border-radius: 0.5rem;
+    background: #000;
+    color: #fff;
+    padding: 0.25rem;
+    position: relative;
+    bottom: -10px;
+}
+
+.instructions > svg {
+    margin-right: 0.25rem;
+}
+
+.offscreen {
+    position: absolute;
+    left: -9999px;
+}

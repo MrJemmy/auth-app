@@ -53,11 +53,12 @@ function usernameVerify(error={}, values){
 
 
 function emailVerify(error={}, values){
+    const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if(!values.email){
         error.email = "Email Required...!"
     }else if(values.email.includes(" ")){
         error.email = "Invalid Email...!"
-    }else if(!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)){
+    }else if(EMAIL_REGEX.test(values.email)){
         error.email = "Invalid email address...!"
     }
 
