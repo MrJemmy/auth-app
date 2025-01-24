@@ -59,9 +59,10 @@ function Register() {
         console.log(result)
         console.log(password)
         setValidPassword(result)
-        const match = (password === matchPassword)
-        setValidMatch(matchPassword)
+        const matchResult = (password === matchPassword && password!="")? true : false
+        setValidMatch(matchResult)
     }, [password, matchPassword])
+
 
     useEffect(() => {
         setErrMsg("")
@@ -108,7 +109,7 @@ function Register() {
                                         ref={usernameRef}
                                         placeholder="Enter Username*"
                                         onChange={(e) => setUsername(e.target.value)}
-                                        required
+                                        spellCheck="false"
                                         aria-invalid={validUsername ? "false" : "true"}
                                         aria-describedby="uidnote"
                                         onFocus={() => setUsernameFocus(true)}
@@ -117,12 +118,12 @@ function Register() {
                                     <FontAwesomeIcon icon={faCheck} className={validUsername ? style.valid : style.hide} />
                                     <FontAwesomeIcon icon={faTimes} className={!validUsername && username ? style.invalid : style.hide} />
 
-                                    <span id="uidnote" className={usernameFocus && username && !validUsername ? style.instructions : style.offscreen}>
+                                    <p id="uidnote" className={usernameFocus && username && !validUsername ? style.instructions : style.offscreen}>
                                         <FontAwesomeIcon icon={faInfoCircle} />
                                         4 to 24 characters.<br />
                                         Must begin with a letter.<br />
                                         Letters, numbers, underscores, hyphens allowed.
-                                    </span>
+                                    </p>
                                 </div>
 
                                 <div className="inputbox">
@@ -132,7 +133,7 @@ function Register() {
                                         autoComplete="off"
                                         placeholder="Enter Email*"
                                         onChange={(e) => setEmail(e.target.value)}
-                                        required
+                                        spellCheck="false"
                                         aria-invalid={validEmail ? "false" : "true"}
                                         aria-describedby="emailnote"
                                         onFocus={() => setEmailFocus(true)}
@@ -141,46 +142,44 @@ function Register() {
                                     <FontAwesomeIcon icon={faCheck} className={validEmail ? style.valid : style.hide} />
                                     <FontAwesomeIcon icon={faTimes} className={!validEmail && email ? style.invalid : style.hide} />
 
-                                    <span id="emailnote" className={emailFocus && email && !validEmail ? style.instructions : style.offscreen}>
+                                    <p id="emailnote" className={emailFocus && email && !validEmail ? style.instructions : style.offscreen}>
                                         <FontAwesomeIcon icon={faInfoCircle} />
                                         min 2 characters for top-level domain<br />
                                         Must inclue @ befor domain name<br />
                                         only dot(.), underscore(_), percent(%), plus(+) allowed.
-                                    </span>
+                                    </p>
                                 </div>
 
                                 <div className="inputbox">
                                     <input
                                         className={style.textbox}
-                                        type="text"
+                                        type="password"
                                         autoComplete="off"
                                         placeholder="Enter Password*"
                                         onChange={(e) => setPassword(e.target.value)}
-                                        required
                                         aria-invalid={validPassword ? "false" : "true"}
                                         aria-describedby="passwordnote"
                                         onFocus={() => setPasswordFocus(true)}
                                         onBlur={() => setPasswordFocus(false)}
                                     />
                                     <FontAwesomeIcon icon={faCheck} className={validPassword ? style.valid : style.hide} />
-                                    <FontAwesomeIcon icon={faTimes} className={!validPassword && email ? style.invalid : style.hide} />
+                                    <FontAwesomeIcon icon={faTimes} className={!validPassword && password ? style.invalid : style.hide} />
 
-                                    <span id="passwordnote" className={passwordFocus && password && !validPassword ? style.instructions : style.offscreen}>
+                                    <p id="passwordnote" className={passwordFocus && password && !validPassword ? style.instructions : style.offscreen}>
                                         <FontAwesomeIcon icon={faInfoCircle} />
-                                        8 to 24 characters.<br />
-                                        Must include uppercase and lowercase letters, a number and a special character.<br />
-                                        Allowed special characters: <span aria-label="exclamation mark">!</span> <span aria-label="at symbol">@</span> <span aria-label="hashtag">#</span> <span aria-label="dollar sign">$</span> <span aria-label="percent">%</span>
-                                    </span>
+                                        8 to 24 characters.
+                                        Must include uppercase and lowercase letters, a number and a special character.
+                                        Allowed special characters: ! @ # %
+                                    </p>
                                 </div>
 
                                 <div className="inputbox">
                                     <input
                                         className={style.textbox}
-                                        type="text"
+                                        type="password"
                                         autoComplete="off"
                                         placeholder="Conform Password*"
                                         onChange={(e) => setMatchPassword(e.target.value)}
-                                        required
                                         aria-invalid={validMatch ? "false" : "true"}
                                         aria-describedby="confirmnote"
                                         onFocus={() => setMatchFocus(true)}
@@ -189,12 +188,12 @@ function Register() {
                                     <FontAwesomeIcon icon={faCheck} className={validMatch ? style.valid : style.hide} />
                                     <FontAwesomeIcon icon={faTimes} className={!validMatch && matchPassword ? style.invalid : style.hide} />
 
-                                    <span id="confirmnote" className={matchFocus && matchPassword && !validMatch ? style.instructions : style.offscreen}>
+                                    <p id="confirmnote" className={matchFocus && matchPassword && !validMatch ? style.instructions : style.offscreen}>
                                         <FontAwesomeIcon icon={faInfoCircle} />
                                         Must match the first password input field.
-                                    </span>
+                                    </p>
                                 </div>
-                                <input className={style.btn} type="submit" value="Sign Up" />
+                                <input className={style.btn} disabled={!validUsername || !validEmail || !validPassword || !validMatch ? true : false} type="submit" value="Sign Up" />
                             </div>
 
 

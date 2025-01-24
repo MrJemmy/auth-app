@@ -12,3 +12,31 @@ body{
     background-color: #dcdce6;
     background-image: url('./assets/images/Background.png');
 }
+
+.inputbox{
+    text-align:  center;
+    position: relative;
+}
+.inputbox  p{
+    text-align:  left;
+    @apply w-3/4;
+    position: absolute;
+    top: -7px;
+    right: -264px;
+    display: flex;
+    align-items: center;
+}
+
+
+.inputbox > svg{
+    position: absolute;
+    top: 22px;
+    right: 64px;
+}
+
+.inputbox input{
+    padding-right: 35px;
+}
+
+
+
