@@ -15,6 +15,8 @@ function Register() {
     const usernameRef = useRef();
     const errRef = useRef();
 
+    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+
     const [username, setUsername] = useState("");
     const [validUsername, setValidUsername] = useState(false);
     const [usernameFocus, setUsernameFocus] = useState(false)
@@ -41,26 +43,25 @@ function Register() {
     }, [])
 
     useEffect(() => {
+        setIsButtonDisabled(validUsername && validEmail && validPassword && validMatch ? false : true)
+    })
+
+    useEffect(() => {
         const result = USER_REGEX.test(username)
-        console.log(result)
-        console.log(username)
         setValidUsername(result)
     }, [username])
 
     useEffect(() => {
         const result = EMAIL_REGEX.test(email)
-        console.log(result)
-        console.log(email)
         setValidEmail(result)
     }, [email])
 
     useEffect(() => {
         const result = PWD_REGEX.test(password)
-        console.log(result)
-        console.log(password)
         setValidPassword(result)
         const matchResult = (password === matchPassword && password!="")? true : false
         setValidMatch(matchResult)
+        
     }, [password, matchPassword])
 
 
@@ -76,6 +77,7 @@ function Register() {
     const handleSubmit = (e) => {
         e.preventDefault();
     }
+
 
     return (
         <>
@@ -193,7 +195,8 @@ function Register() {
                                         Must match the first password input field.
                                     </p>
                                 </div>
-                                <input className={style.btn} disabled={!validUsername || !validEmail || !validPassword || !validMatch ? true : false} type="submit" value="Sign Up" />
+                                {/*  disabled={isButtonDisabled}  */}
+                                <input className={`${style.btn} ${isButtonDisabled ? style.btnDisabled : {}}`} type="submit" value="Sign Up" />
                             </div>
 
 
