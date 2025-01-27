@@ -5,9 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import convertToBase64 from "../../utils/convert";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "../../api/axios";
 
 function Register() {
 
+    const REGISTER_URL = "/user/register"
     const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
     const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
     const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -74,8 +76,28 @@ function Register() {
         setFile(base64)
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        try {
+            const response = await axios.post(REGISTER_URL, 
+                {
+                    username,
+                    email,
+                    password,
+                }
+            )
+            console.log(response.data)
+        } catch (error) {
+            if(!error?.response){
+                setErrMsg("no server response")
+            }else if(error.response?.status == 409){
+                setErrMsg("username already registered")
+            }else{
+                setErrMsg("server error, registration faild")
+            }
+        }
+        // call API then redirect to login page if successful
+        setSuccess(true)
     }
 
 

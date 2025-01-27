@@ -11,7 +11,7 @@ const credentials = require("./src/middleware/credentials")
 
 const app = express()
 
-// app.use(credentials)
+app.use(credentials)
 app.use(cors(corsOptions))
 
 app.use(express.json())

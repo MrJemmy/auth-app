@@ -3,6 +3,7 @@ const allowedOrigins = require("./allowedOrigins")
 const corsOptions = {
     origin: (origin, cb) =>{
         // when we use localhost then value of origin us undefile then add condition :- !origin
+        console.log(origin)
         if (allowedOrigins.indexOf(origin) != -1 || !origin) {
             cb(null, true)
         }else{
