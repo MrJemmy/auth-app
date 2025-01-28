@@ -35,7 +35,7 @@ function Register() {
     const [validMatch, setValidMatch] = useState(false);
     const [matchFocus, setMatchFocus] = useState(false)
 
-    const [file, setFile] = useState();
+    const [file, setFile] = useState(null);
 
     const [errMsg, setErrMsg] = useState("");
     const [success, setSuccess] = useState(false);
@@ -72,20 +72,24 @@ function Register() {
     }, [username, email, password, matchPassword])
 
     const onUpload = async (e) => {
-        const base64 = await convertToBase64(e.target.files[0])
-        setFile(base64)
+        // const base64 = await convertToBase64(e.target.files[0])
+        // setFile(base64)
+        setFile(e.target.files[0])
     }
+
+    useEffect(() => {
+
+    }, [file])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(REGISTER_URL, 
-                {
-                    username,
-                    email,
-                    password,
-                }
-            )
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('image', file);
+            const response = await axios.post(REGISTER_URL, formData)
             console.log(response.data)
         } catch (error) {
             if(!error?.response){

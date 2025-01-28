@@ -27,3 +27,7 @@ dist-ssr
 # Enviroment file
 .env
 package-lock.json
+
+
+#images
+server/public/images/
