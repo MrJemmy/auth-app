@@ -3,6 +3,8 @@ const { authToken } = require("../middleware/tokenAuth")
 const user = require("../controllers/user")
 const verifyRoles = require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/roles_list")
+const {profilePic} = require("../config/multer_config")
+
 
 
 const route = express.Router()
@@ -11,7 +13,7 @@ const route = express.Router()
 // route.use(authToken)  // this will apply auth on all below API
 
 
-route.post('/register', user.register)
+route.post('/register',profilePic.single("image"), user.register)
 route.post('/login', user.login)
 route.post('/refresh', user.refreshToken);
 route.post('/generate_otp', user.generateOTP);

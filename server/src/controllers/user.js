@@ -20,7 +20,6 @@ const salt = bcrypt.genSaltSync(10)
     */
 const register = async (req, res) => {
     try {
-        const startTime = new Date();
         const { username, password, email } = req.body;
 
         // Add Email Authentication Here.
@@ -58,9 +57,6 @@ const register = async (req, res) => {
         // if user is Admin and creating admin user, write condition for that
         await User.create({ username: username, password: hashPassword, email: email, profilePic: profilePic })
 
-
-        const endTime = new Date();
-        console.log('Time with Promise.all:', endTime - startTime, 'ms');
         return res.status(201).json({
             "msg": "user created succesfully"
         })
