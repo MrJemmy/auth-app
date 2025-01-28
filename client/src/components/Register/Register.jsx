@@ -36,6 +36,7 @@ function Register() {
     const [matchFocus, setMatchFocus] = useState(false)
 
     const [file, setFile] = useState(null);
+    const [base64File, setBase64File] = useState(null);
 
     const [errMsg, setErrMsg] = useState("");
     const [success, setSuccess] = useState(false);
@@ -72,13 +73,12 @@ function Register() {
     }, [username, email, password, matchPassword])
 
     const onUpload = async (e) => {
-        // const base64 = await convertToBase64(e.target.files[0])
-        // setFile(base64)
+        const base64 = await convertToBase64(e.target.files[0])
+        setBase64File(base64)
         setFile(e.target.files[0])
     }
 
     useEffect(() => {
-
     }, [file])
 
     const handleSubmit = async (e) => {
@@ -122,7 +122,7 @@ function Register() {
                         <form className="py-1" onSubmit={handleSubmit}>
                             <div className="profile flex justify-center py-5">
                                 <label htmlFor="profile">
-                                    <img className={style.profile_img} src={file || avatar} alt="avtar" />
+                                    <img className={style.profile_img} src={base64File || avatar} alt="avtar" />
                                 </label>
                                 <input type="file" name="profile" id="profile" onChange={onUpload} />
 
