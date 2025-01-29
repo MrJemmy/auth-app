@@ -1,34 +1,26 @@
 import { Link } from "react-router-dom";
-import avatar from "../../assets/images/profile.png"
 import style from "../../styles/form.module.css"
-import { useFormik } from "formik";
-import { validate } from "../../utils/validation";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {  } from "@fortawesome/free-solid-svg-icons"
+import { useEffect, useRef, useState } from "react";
 
 function Login() {
 
-    const formik = useFormik({
-        initialValues: {
-            username: "",
-            password: ""
-        },
-        validate: validate,
-        validateOnBlur: false,
-        validateOnChange: false,
-        onSubmit: async (values) => {
+    const identifierRef = useRef();
+    const errRef = useRef();
 
-            const result = validate()
-            console.log(formik.errors)
-            if (values.username && values.password) {
-                console.log(values);
-                console.log("Login successful!");
-            } else {
-                console.log("Please fill out all fields correctly.");
-            }
-        }
-    })
+    const [identifier, setIdentifier] = useState("");
+    const [password, setPassword] = useState("");
 
+
+    const [errMsg, setErrMsg] = useState("");
+    const [success, setSuccess] = useState(false);
+
+    useEffect(() => {
+        identifierRef.current.focus()
+    }, [])
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+    }
     return (
         <>
             <div className="container mx-auto">
@@ -42,15 +34,26 @@ function Login() {
                             </span>
                         </div>
 
-                        <form className="py-1" onSubmit={formik.handleSubmit}>
-                            <div className="profile flex justify-center py-5">
-                                <img className={style.profile_img} src={avatar} alt="avtar" />
-                            </div>
+                        <form className="py-1" onSubmit={handleSubmit}>
 
                             <div className="inputbox flex flex-col items-center gap-6">
-
-                                <input className={`${style.textbox} ${formik.errors.username?style.invalid_textbox:style.valid_textbox}`} {...formik.getFieldProps('username')} type="text" placeholder="Enter Username" />
-                                <input className={`${style.textbox} ${formik.errors.username?style.invalid_textbox:style.valid_textbox}`} {...formik.getFieldProps('password')} type="password" placeholder="Enter Password" />
+                                <input
+                                    className={style.textbox}
+                                    type="text"
+                                    ref={identifierRef}
+                                    autoComplete="off"
+                                    value={identifier}
+                                    placeholder="Enter Username or Email"
+                                    onChange={(e) => setIdentifier(e.target.value)} 
+                                />
+                                <input
+                                    className={style.textbox}
+                                    type="password"
+                                    autoComplete="off"
+                                    value={password}
+                                    placeholder="Enter Password"
+                                    onChange={(e) => setPassword(e.target.value)} 
+                                />
                                 <input className={style.btn} type="submit" value="Sign Up" />
                             </div>
 
