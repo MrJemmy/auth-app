@@ -13,13 +13,17 @@ const transporter = nodemailer.createTransport(
 
 
 const sendEmail = (to, subject, html) => {
-    console.log("===============")
-    transporter.sendMail({
-        from: process.env.SENDER_EMAIL,
-        to: to,
-        subject: subject,
-        html: html
-    })
+
+    try {
+        transporter.sendMail({
+            from: process.env.SENDER_EMAIL,
+            to: to,
+            subject: subject,
+            html: html
+        })
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 

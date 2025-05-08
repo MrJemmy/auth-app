@@ -5,8 +5,8 @@ const cookieParse = require('cookie-parser')
 const cors = require('cors')
 const path = require('path')
 const fs = require('fs')
-const errorHandler =require("./src/middleware/errorHandler")
-const corsOptions =require("./src/config/corsConfig")
+const errorHandler = require("./src/middleware/errorHandler")
+const corsOptions = require("./src/config/corsConfig")
 const credentials = require("./src/middleware/credentials")
 
 const app = express()
@@ -20,55 +20,25 @@ app.use(cookieParse())
 app.disable("x-powered-by")
 
 
-/* 
-TODO: put this fs create portion in function
-*/
-if (!fs.existsSync(path.join(__dirname, 'public'))){
-    fs.mkdirSync(path.join(__dirname, 'public'));
-    fs.mkdirSync(path.join(__dirname, 'public', 'images'));
-    fs.mkdirSync(path.join(__dirname, 'public', 'images', 'profilePics'));
-    fs.mkdirSync(path.join(__dirname, 'public', 'images', 'uploads'));
-}
+const directories = [
+    path.join(__dirname, 'public', 'images', 'profilePics'),
+    path.join(__dirname, 'public', 'images', 'uploads')
+];
 
-if (!fs.existsSync(path.join(__dirname, 'public', 'images'))){
-    fs.mkdirSync(path.join(__dirname, 'public', 'images'));
-    fs.mkdirSync(path.join(__dirname, 'public', 'images', 'profilePics'));
-    fs.mkdirSync(path.join(__dirname, 'public', 'images', 'uploads'));
-}
-
-if (!fs.existsSync(path.join(__dirname, 'public', 'images', 'profilePics'))){
-    fs.mkdirSync(path.join(__dirname, 'public', 'images', 'profilePics'));
-}
-
-if (!fs.existsSync(path.join(__dirname, 'public', 'images', 'uploads'))){
-    fs.mkdirSync(path.join(__dirname, 'public', 'images', 'uploads'));
-}
+directories.forEach((dirPath) => {
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+    }
+});
 
 app.use(express.static(path.join(__dirname, "public")))
 
+app.use('/user', require('./src/user/routes'))
 
-app.use('/user', require('./src/routes/user'))
-
-app.get('/set', (req, res) => {
-
-    const time = "data with time 2"
-    res.cookie('data2', time, { maxAge: 10000 });
-
-    res.json({
-        msg: "my server is running"
-    })
-})
-
-app.get('/get', (req, res) => {
-    res.json({
-        msg: req.cookies
-    })
-})
-
-app.all("*", (req, res)=>{
+app.all("*", (req, res) => {
     res.status(404).json({
-            error: "404 not found"
-        });
+        error: "404 not found"
+    });
 })
 
 app.use(errorHandler)

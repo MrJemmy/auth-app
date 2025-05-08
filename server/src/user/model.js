@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const ROLES_LIST = require('../config/roles_list')
+const ROLES_LIST = require('./const')
 
 
 
@@ -25,15 +25,15 @@ const userSchema = new mongoose.Schema({
     mobile: Number,
     address: String,
     profilePic: {
-        type: String, 
+        type: String,
         default: ''
     },
     roles: {
-        type: [Number], 
+        type: [Number],
         enum: [ROLES_LIST.admin, ROLES_LIST.editor, ROLES_LIST.user],
         default: [ROLES_LIST.user]
     }
-}, {      
+}, {
     timestamps: true,
     versionKey: false
 })
@@ -45,4 +45,4 @@ userSchema.virtual('id').get(function () {
 
 const User = mongoose.model('User', userSchema)
 
-module.exports = { User }
+module.exports = User

@@ -1,10 +1,9 @@
-const { User } = require('../models/user')
+const User = require('./model')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { sendEmail } = require('../config/email_config')
 const { OTP_DATA } = require('../config/email_temps')
-const { json } = require('express')
-const e = require('express')
+
 
 const otpStore = {}
 const salt = bcrypt.genSaltSync(10)
@@ -19,6 +18,9 @@ const salt = bcrypt.genSaltSync(10)
         }
     */
 const register = async (req, res) => {
+
+    let profilePic = "";
+
     try {
         const { username, password, email } = req.body;
 
@@ -46,8 +48,6 @@ const register = async (req, res) => {
             })
         }
 
-        let profilePic = "";
-
         if (req.file && req.file.filename) {
             profilePic = req.file.filename;
         }
@@ -62,6 +62,11 @@ const register = async (req, res) => {
         })
 
     } catch (error) {
+
+        if (profilePic) {
+            console.log("delete uploaded profile pic")
+        }
+
         console.error(error)
         return res.status(500).json({ "msg": "error creating user" })
     }
@@ -158,9 +163,9 @@ const generateOTP = async (req, res) => {
 
         const otp = Math.floor(Math.random() * 9000 + 1000);
 
-        otpStore[userEmail] = { 
-            otp: otp, 
-            expires: Date.now() + 192000, 
+        otpStore[userEmail] = {
+            otp: otp,
+            expires: Date.now() + 192000,
             isVerified: false
         };
 
@@ -184,20 +189,16 @@ const generateOTP = async (req, res) => {
 const verifyOTP = async (req, res) => {
 
     try {
-        const {email, otp} = req.body;
+        const { email, otp } = req.body;
 
-        if(!otpStore[email]) return res.json({msg: "email not found in otp store"});
+        if (!otpStore[email]) return res.json({ msg: "email not found in otp store" });
 
-        if(otpStore[email]["otp"] == otp && (Date.now() < otpStore[email]["expires"] )) {
-            otpStore[email]["isVerified"] = true;
-            return res.json({
-                msg: "otp verified"
-            })
-        }else{
-            return res.json({
-                msg: "otp verification failed"
-            })
-        }
+        if (otpStore[email]["otp"] !== otp || (Date.now() > otpStore[email]["expires"])) return res.json({
+            msg: "otp verification failed"
+        })
+
+        otpStore[email]["isVerified"] = true;
+        return res.json({ msg: "otp verified" })
 
     } catch (error) {
         console.error(error)
@@ -212,10 +213,10 @@ const forgotPassword = async (req, res) => {
     try {
         // verify Email or Username
         const { email, newPassword } = req.body;
-        
-        if (!otpStore[email]) return res.json({msg: "email not found in otp store"})
-        
-        if(!otpStore[email]["isVerified"]) return res.json({msg: "otp is not verified"})
+
+        if (!otpStore[email]) return res.json({ msg: "email not found in otp store" })
+
+        if (!otpStore[email]["isVerified"]) return res.json({ msg: "otp is not verified" })
 
         delete otpStore[email];
 
@@ -321,6 +322,9 @@ const getOne = async (req, res) => {
 }
 
 const updateOne = async (req, res) => {
+
+    let newFileName = ""
+
     try {
         const user_id = req.params["user_id"]; // 3
         const userBody = req.body;
@@ -358,7 +362,8 @@ const updateOne = async (req, res) => {
             user["address"] = userBody["address"];
         }
 
-        if (req.file && req.file.filename) {
+        if (req.file?.filename) {
+            newFileName = req.file.filename
             const oldFileName = user["profilePic"];
 
             if (oldFileName !== "") {
@@ -368,16 +373,21 @@ const updateOne = async (req, res) => {
                 fs.unlinkSync(oldFilePath);
             }
 
-            user["profilePic"] = req.file.filename;
+            user["profilePic"] = newFileName;
         }
 
-        user.save();
+        await user.save();
 
         return res.status(202).json({
             msg: "user updated",
         });
 
     } catch (error) {
+
+        if (newFileName) {
+            console.log("remove file name")
+        }
+
         console.log(error);
         return res.status(500).json({
             msg: "internal server error",
@@ -390,21 +400,18 @@ const updateOne = async (req, res) => {
 const deleteOne = async (req, res) => {
     // User self, ADMIN
     try {
-        const userId = req.params["user_id"]; // 3
+        const userId = req.params["user_id"];
 
         const singleUser = await User.exists({ _id: userId });
 
-        if (!singleUser) {
-            return res.json({
-                msg: "this user is dose not exist",
-            });
-        } else {
-            await User.deleteOne({ _id: userId });
+        if (!singleUser) return res.json({ msg: "user dose not exist" });
 
-            return res.status(202).json({
-                msg: "user removed",
-            });
-        }
+        await User.deleteOne({ _id: userId });
+
+        return res.status(202).json({
+            msg: "user removed",
+        });
+
     } catch (error) {
         console.log(error);
         res.status(500).json({
