@@ -1,8 +1,8 @@
 const User = require('./model')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { sendEmail } = require('../config/email_config')
-const { OTP_DATA } = require('../config/email_temps')
+const { sendEmail, genOTP } = require('../utils/email')
+const { OTP_EMAIL } = require("./const")
 
 
 const otpStore = {}
@@ -157,11 +157,11 @@ const generateOTP = async (req, res) => {
         const user = await User.findOne({ email: userEmail })
         if (!user) return res.json({ msg: "User dose exis with this email address" })
 
-        const subject = OTP_DATA["OTP_SUBJECT"];
-        const htmlPre = OTP_DATA["OTP_HTML_PRE"];
-        const htmlPost = OTP_DATA["OTP_HTML_POST"];
+        const subject = OTP_EMAIL["subject"];
+        const htmlPre = OTP_EMAIL["htmlPre"];
+        const htmlPost = OTP_EMAIL["htmlPost"];
 
-        const otp = Math.floor(Math.random() * 9000 + 1000);
+        const otp = genOTP();
 
         otpStore[userEmail] = {
             otp: otp,
