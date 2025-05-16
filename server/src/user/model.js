@@ -3,6 +3,14 @@ const { GENDERS, ROLES_LIST } = require("./const")
 
 
 const userSchema = new mongoose.Schema({
+    googleId: {
+        type: String,
+        default: ""
+    },
+    facebookId: {
+        type: String,
+        default: ""
+    },
     username: {
         type: String,
         required: [true, "Please provide unique Username"],
@@ -10,12 +18,10 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: [true, "Please provide a Password"],
         unique: false
     },
     email: {
         type: String,
-        required: [true, "Please provide a unique and valid Email"],
         unique: [true, "Email Exist"],
         match: [/\S+@\S+\.\S+/, 'Invalid email format']
     },
@@ -59,7 +65,7 @@ const userSchema = new mongoose.Schema({
 userSchema.virtual('id').get(function () {
     return this._id.toString(); // or this._id.valueOf() for a number
 });
-
+      
 const User = mongoose.model('User', userSchema)
 
 module.exports = User

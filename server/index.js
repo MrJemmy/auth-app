@@ -8,6 +8,9 @@ const fs = require('fs')
 const errorHandler = require("./src/middleware/errorHandler")
 const corsOptions = require("./src/config/corsConfig")
 const credentials = require("./src/middleware/credentials")
+const passport = require('passport');
+const googleStrategy = require('./src/auth/strategies/google.strategy');
+const facebookStrategy = require('./src/auth/strategies/facebook.strategy');
 
 const app = express()
 
@@ -31,8 +34,13 @@ directories.forEach((dirPath) => {
     }
 });
 
+
+googleStrategy(passport);
+facebookStrategy(passport);
+app.use(passport.initialize());
 app.use(express.static(path.join(__dirname, "public")))
 
+app.use('/auth', require('./auth/auth.routes'));
 app.use('/user', require('./src/user/routes'))
 
 app.all("*", (req, res) => {
