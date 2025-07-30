@@ -68,7 +68,7 @@ const createOne = async (req, res) => {
         user.save()
 
 
-        res.json({
+        return res.json({
             msg: "Product created"
         })
 

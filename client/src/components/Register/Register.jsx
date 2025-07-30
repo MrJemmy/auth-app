@@ -3,6 +3,7 @@ import avatar from "../../assets/images/profile.png";
 import style from "../../styles/form.module.css";
 import { useEffect, useRef, useState } from "react";
 import convertToBase64 from "../../utils/convert";
+import { useAuth } from '../../context/AuthContext';
 import {
   faCheck,
   faTimes,
@@ -17,6 +18,8 @@ function Register() {
   const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
   const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
+
+  const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
   const usernameRef = useRef();
@@ -47,6 +50,13 @@ function Register() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
+    if (isLoggedIn === true) {
+      navigate('/');
+    }
+  }, [isLoggedIn]);
+
+
+  useEffect(() => {
     usernameRef.current.focus();
   }, []);
 
@@ -55,7 +65,7 @@ function Register() {
       validUsername && validEmail && validPassword && validMatch ? false : true
     );
   });
-
+  
   useEffect(() => {
     const result = USER_REGEX.test(username);
     setValidUsername(result);

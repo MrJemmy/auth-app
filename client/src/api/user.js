@@ -3,9 +3,9 @@ import axios from './axios';
 
 export const register = async (registerData) => {
     try {
-        const {data: {msg}, status} = await axios.get('/user/register', registerData);
+        const {data: {msg, token}, status} = await axios.get('/user/register', registerData);
 
-        return msg;
+        return [status, msg, token];
     } catch (error) {
         console.error('Error fetching users:', error);
         throw error; // Re-throw to let the component handle it

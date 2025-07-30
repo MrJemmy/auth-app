@@ -1,12 +1,13 @@
 const express = require('express');
 const passport = require('passport');
 const auth = require('./controller');
+const { authToken } = require("./middeware")
 const { profilePic } = require("../config/multerConfig")
 
 const router = express.Router();
 
-router.get('/google',passport.authenticate('google', { scope: ['email', 'profile'] }));
-router.get('/google/callback',passport.authenticate('google', { session: false }),auth.callback);
+router.get('/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
+router.get('/google/callback', passport.authenticate('google', { session: false }), auth.callback);
 router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 router.get('/facebook/callback', passport.authenticate('facebook', { session: false }), auth.callback);
 

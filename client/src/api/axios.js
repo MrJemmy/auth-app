@@ -14,4 +14,28 @@ const axiosInstance = axios.create({
     withCredentials: true, // Enable cookies for cross-domain requests
   });
 
+
+axiosInstance.interceptors.response.use(
+  res => res,
+  async err => {
+    const originalRequest = err.config;
+    // status code is 403 insted of 401 !originalRequest._retry replaced with !originalRequest.?sent
+    if (err.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;  // replaced by originalRequest.sent = true
+      try {
+
+        // const newAccessToken = await refresh();  // refresh is Custom Hook
+        // originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`
+        // return axiosInstance(originalRequest);
+
+        await axiosInstance.get('/auth/refresh');
+        return axiosInstance(originalRequest);
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    }
+    return Promise.reject(err);
+  }
+);
+
   export default axiosInstance;

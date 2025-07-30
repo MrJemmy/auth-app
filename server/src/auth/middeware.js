@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
+const authToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -13,6 +13,8 @@ module.exports = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (err) {
-        res.status(401).json({ message: 'Invalid or expired token' });
+        return res.status(401).json({ message: 'Invalid or expired token' });
     }
 };
+
+module.exports = { authToken }

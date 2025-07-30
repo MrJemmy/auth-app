@@ -1,9 +1,9 @@
 const express = require('express')
-const { authToken } = require("../middleware/tokenAuth")
+const { authToken } = require("../auth/middeware")
 const user = require("./controllers")
 const verifyRoles = require("../middleware/verifyRoles")
 const { ROLES_LIST } = require("./const")
-const { profilePic } = require("../config/multer_config")
+const { profilePic } = require("../config/multerConfig")
 
 
 const router = express.Router()
