@@ -23,6 +23,14 @@ app.use(cookieParse())
 app.disable("x-powered-by")
 
 
+app.use(express.static(path.join(__dirname, "public")))
+
+
+googleStrategy(passport);
+facebookStrategy(passport);
+app.use(passport.initialize());
+
+
 const directories = [
     path.join(__dirname, 'public', 'images', 'profilePics'),
     path.join(__dirname, 'public', 'images', 'uploads')
@@ -35,12 +43,7 @@ directories.forEach((dirPath) => {
 });
 
 
-googleStrategy(passport);
-facebookStrategy(passport);
-app.use(passport.initialize());
-app.use(express.static(path.join(__dirname, "public")))
-
-app.use('/auth', require('./auth/auth.routes'));
+app.use('/auth', require('./src/auth/routes'));
 app.use('/user', require('./src/user/routes'))
 
 app.all("*", (req, res) => {

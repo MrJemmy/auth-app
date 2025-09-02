@@ -9,7 +9,7 @@ import {
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "../../api/axios";
+import axiosInstance from "../../api/axios";
 
 function Register() {
   const REGISTER_URL = "/user/register";
@@ -94,7 +94,7 @@ function Register() {
       formData.append("email", email);
       formData.append("password", password);
       formData.append("image", file);
-      const response = await axios.post(REGISTER_URL, formData);
+      const response = await axiosInstance.post(REGISTER_URL, formData);
       console.log(response.data);
       navigate("/login");
     } catch (error) {

@@ -1,7 +1,7 @@
 const { Strategy } = require('passport-facebook');
 const User = require('../../user/user.model');
 
-module.exports = (passport) => {
+const facebookStrategy = (passport) => {
     passport.use(new Strategy({
         clientID: process.env.FACEBOOK_APP_ID,
         clientSecret: process.env.FACEBOOK_APP_SECRET,
@@ -24,8 +24,11 @@ module.exports = (passport) => {
 
             return done(null, user);
 
-        } catch (err) {
-            return done(err, null);
+        } catch (error) {
+            console.log(error)
+            return done(error, null);
         }
     }));
 };
+
+module.exports = facebookStrategy
