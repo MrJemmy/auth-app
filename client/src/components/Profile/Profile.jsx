@@ -7,7 +7,7 @@ import { validateProfile } from "../../utils/validation";
 import { useState } from "react";
 import convertToBase64 from "../../utils/convert";
 
-function Register() {
+function Profile() {
 
     const [file, setFile] = useState();
 
@@ -47,7 +47,7 @@ function Register() {
                 <div className="flex justify-center items-center h-screen">
                     <div className={style.glass}>
                         <div className="title flex flex-col items-center">
-                            <h1 className="text-5xl font-bold">Register</h1>
+                            <h1 className="text-5xl font-bold">Profile</h1>
                             <span className="py-4 text-xl w-2/3 text-center text-gray-500">
                                 You can update your details.
                             </span>
@@ -90,4 +90,4 @@ function Register() {
     )
 }
 
-export default Register;
+export default Profile;

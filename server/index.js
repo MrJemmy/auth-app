@@ -42,9 +42,9 @@ directories.forEach((dirPath) => {
     }
 });
 
-
 app.use('/auth', require('./src/auth/routes'));
 app.use('/user', require('./src/user/routes'))
+app.use('/product', require('./src/product/routes'))
 
 app.all("*", (req, res) => {
     res.status(404).json({

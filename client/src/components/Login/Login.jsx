@@ -1,11 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import style from "../../styles/form.module.css";
 import { useEffect, useRef, useState } from "react";
+import { login } from "../../api/user";
+import { useAuth } from "../../context/AuthContext";
 
 function Login() {
   const navigate = useNavigate();
   const identifierRef = useRef();
   const errRef = useRef();
+  const {} = useAuth();
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +23,15 @@ function Login() {
   const handleSubmit = (e) => {
     console.log("data");
     e.preventDefault();
-    navigate("/");
+    const [status, msg, token]= login({identifier, password})
+    if(status === 200){
+      
+      navigate("/");
+    }
+    else{
+      setErrMsg(msg)
+    }
+    
   };
   return (
     <>

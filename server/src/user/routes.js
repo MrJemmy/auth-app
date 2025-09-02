@@ -1,23 +1,20 @@
 const express = require('express')
-const { authToken } = require("../middleware/tokenAuth")
+const { authToken } = require("../auth/middeware")
 const user = require("./controllers")
-const userAuth = require("./auth")
 const verifyRoles = require("../middleware/verifyRoles")
 const { ROLES_LIST } = require("./const")
-const { profilePic } = require("../config/multer_config")
+const { profilePic } = require("../config/multerConfig")
 
 
-const route = express.Router()
+const router = express.Router()
 
 // route.use(authToken)  // this will apply auth on all below API
 
+router.get('/', authToken, verifyRoles(ROLES_LIST.admin, ROLES_LIST.editor), user.getAll)
+router.get('/:userId', authToken, user.getOne)
+router.put('/:user_id', profilePic.single("image"), authToken, user.updateOne)
+router.delete('/:user_id', authToken, user.deleteOne)
 
 
 
-route.get('/', authToken, verifyRoles(ROLES_LIST.admin, ROLES_LIST.editor), user.getAll)
-route.get('/:userId', authToken, user.getOne)
-route.put('/:user_id', authToken, profilePic.single("image"), user.updateOne)
-route.delete('/:user_id', authToken, user.deleteOne)
-
-
-module.exports = route;
+module.exports = router;
