@@ -85,8 +85,23 @@ const register = async (req, res) => {
         // if user is Admin and creating admin user, write condition for that
         await User.create({ username: username, password: hashPassword, email: email, profilePic: profilePic })
 
+        const subject = OTP_EMAIL["subject"];
+        const htmlPre = OTP_EMAIL["htmlPre"];
+        const htmlPost = OTP_EMAIL["htmlPost"];
+
+        const otp = genOTP();
+
+        otpStore[email] = {
+            otp: otp,
+            expires: Date.now() + 192000
+        };
+
+        const htmlFinal = `${htmlPre} ${otp} ${htmlPost}`
+
+        sendEmail(email, subject, htmlFinal)
+
         return res.status(201).json({
-            "msg": "user created succesfully"
+            "msg": "please verify user"
         })
 
     } catch (error) {
@@ -95,6 +110,29 @@ const register = async (req, res) => {
             console.log("delete uploaded profile pic")
         }
 
+        console.error(error)
+        return res.status(500).json({ "msg": "error creating user" })
+    }
+}
+
+const verifyUser = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+
+        if (!otpStore[email]) return res.json({ msg: "email not found in otp store" });
+
+        if (otpStore[email]["otp"] !== otp || (Date.now() > otpStore[email]["expires"])) return res.json({
+            msg: "otp verification failed"
+        })
+
+        const user = await User.findOne({ email: email });
+        user.verified = true;
+        await user.save()
+
+        delete otpStore[email];
+
+        return res.status(200).json({ "msg": "user verified" })
+    } catch (error) {
         console.error(error)
         return res.status(500).json({ "msg": "error creating user" })
     }
@@ -313,4 +351,4 @@ const logout = async (req, res) => {
     }
 }
 
-module.exports = { callback, register, login, forgotPassword, resetPassword, generateOTP, verifyOTP, logout, refreshToken }
+module.exports = { callback, register, login, forgotPassword, resetPassword, generateOTP, verifyOTP, logout, refreshToken, verifyUser }

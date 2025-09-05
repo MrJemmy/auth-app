@@ -13,6 +13,7 @@ router.get('/facebook/callback', passport.authenticate('facebook', { session: fa
 
 
 router.post('/register', profilePic.single("image"), auth.register)
+router.post('/verify_user', auth.verifyUser)
 router.post('/login', auth.login)
 router.post('/refresh', auth.refreshToken);
 router.post('/generate_otp', auth.generateOTP);

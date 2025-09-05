@@ -56,6 +56,7 @@ const userSchema = new mongoose.Schema({
         default: [ROLES_LIST.user]
     },
     products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    verified: { type: Boolean, default: false }
 }, {
     timestamps: true,
     versionKey: false
@@ -65,7 +66,7 @@ const userSchema = new mongoose.Schema({
 userSchema.virtual('id').get(function () {
     return this._id.toString(); // or this._id.valueOf() for a number
 });
-      
+
 const User = mongoose.model('User', userSchema)
 
 module.exports = User
